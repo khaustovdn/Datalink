@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=datalink
+Exec=datalink
+Icon=io.github.Datalink
+Terminal=false
+Type=Application
+Categories=GTK;
+StartupNotify=true

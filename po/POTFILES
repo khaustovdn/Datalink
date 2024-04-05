@@ -1,0 +1,6 @@
+data/io.github.Datalink.desktop.in
+data/io.github.Datalink.metainfo.xml.in
+data/io.github.Datalink.gschema.xml
+src/main.vala
+src/window.vala
+src/window.ui
