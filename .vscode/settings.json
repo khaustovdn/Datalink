@@ -1,6 +1,6 @@
 {
     "mesonbuild.configureOnOpen": false,
-    "C_Cpp.default.compileCommands": "/home/khaustov/Projects/Datalink/builddir/compile_commands.json",
+    "C_Cpp.default.compileCommands": "/home/khaustov/Projects/Datalink/_build/compile_commands.json",
     "C_Cpp.default.configurationProvider": "mesonbuild.mesonbuild",
     "files.watcherExclude": {
         "**/.git/objects/**": true,

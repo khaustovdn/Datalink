@@ -21,11 +21,16 @@
 namespace Datalink {
     [GtkTemplate (ui = "/io/github/Datalink/window.ui")]
     public class Window : Adw.ApplicationWindow {
-        [GtkChild]
-        private unowned Gtk.Label label;
-
         public Window (Gtk.Application app) {
             Object (application: app);
+        }
+
+        construct {
+            FileReader file_reader = new FileReader ("src/file.txt");
+            var file_text = file_reader.read_all_text ();
+            if (file_text != null) {
+                print ("%s", file_text);
+            }
         }
     }
 }

@@ -2,6 +2,7 @@ datalink_sources = [
   'main.vala',
   'application.vala',
   'window.vala',
+  'file-reader.vala',
 ]
 
 datalink_deps = [
