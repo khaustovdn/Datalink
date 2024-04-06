@@ -1,4 +1,4 @@
-/* window.vala
+/* user.vala
  *
  * Copyright 2024 khaustov
  *
@@ -19,22 +19,13 @@
  */
 
 namespace Datalink {
-    [GtkTemplate (ui = "/io/github/Datalink/window.ui")]
-    public class Window : Adw.ApplicationWindow {
-        public Window (Gtk.Application app) {
-            Object (application: app);
-        }
+    public class User : Object {
+        public string login { get; set; }
+        public string password { get; set; }
+        public Gee.ArrayList<string> menu { get; set; }
 
-        construct {
-            FileReader file_reader = new FileReader ("src/file.txt");
-            Tokenizer tokenizer = new Tokenizer ();
-            Serializer serializer = new Serializer ();
-            var file_text = file_reader.read_all_text ();
-            if (file_text == null) return;
-            var tokens = tokenizer.tokenize (file_text);
-            int index = 0;
-            var serials = (User) serializer.deserialize (typeof (User), tokens, index);
-            print ("%s", serials.login);
+        public User (string login, string password) {
+            Object (login: login, password: password, menu: new Gee.ArrayList<string> ());
         }
     }
 }

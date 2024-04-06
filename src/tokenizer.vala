@@ -29,7 +29,7 @@ namespace Datalink {
             StringBuilder token = new StringBuilder();
 
             for (var i = 0; i < data.length; i++) {
-                if ("{}[],".contains(data.get(i).to_string())) {
+                if (data.get(i).to_string() in @"{}[],") {
                     if (token.len > 0) {
                         result.add(token.str);
                         token = new StringBuilder();

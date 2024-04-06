@@ -4,6 +4,8 @@ datalink_sources = [
   'window.vala',
   'file-reader.vala',
   'tokenizer.vala',
+  'serializer.vala',
+  'user.vala',
 ]
 
 datalink_deps = [

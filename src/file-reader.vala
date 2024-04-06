@@ -29,15 +29,17 @@ namespace Datalink {
         public string ? read_all_text () {
             File file = File.new_for_path (file_path);
             try {
+                StringBuilder result = new StringBuilder ();
+
                 FileInputStream @is = file.read ();
                 DataInputStream dis = new DataInputStream (@is);
-                string line, result = "";
+                string line;
 
                 while ((line = dis.read_line ()) != null) {
-                    result += line;
+                    result.append (line.strip ());
                 }
 
-                return result;
+                return result.str;
             } catch (Error e) {
                 print ("Error: %s\n", e.message);
                 return null;
