@@ -22,10 +22,10 @@ namespace Datalink {
     public class User : Object {
         public string login { get; set; }
         public string password { get; set; }
-        public Gee.ArrayList<string> menu { get; set; }
+        public User tester { get; set; }
 
         public User (string login, string password) {
-            Object (login: login, password: password, menu: new Gee.ArrayList<string> ());
+            Object (login: login, password: password);
         }
     }
 }

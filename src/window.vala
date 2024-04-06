@@ -30,11 +30,15 @@ namespace Datalink {
             Tokenizer tokenizer = new Tokenizer ();
             Serializer serializer = new Serializer ();
             var file_text = file_reader.read_all_text ();
-            if (file_text == null) return;
+            if (file_text == null)return;
             var tokens = tokenizer.tokenize (file_text);
+            //  foreach (var item in tokens) {
+            //  print ("%s\n", item);
+            //  }
             int index = 0;
-            var serials = (User) serializer.deserialize (typeof (User), tokens, index);
-            print ("%s", serials.login);
+            var serials = (User) serializer.deserialize (typeof (User), tokens, ref index);
+            if (serials.tester != null)
+                print ("%s", serials.tester.login);
         }
     }
 }
