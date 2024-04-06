@@ -1,3 +1,5 @@
+src/*.txt
+
 .flatpak
 _build
 builddir

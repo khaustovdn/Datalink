@@ -1,4 +1,4 @@
-/* window.vala
+/* tokenizer.vala
  *
  * Copyright 2024 khaustov
  *
@@ -19,21 +19,28 @@
  */
 
 namespace Datalink {
-    [GtkTemplate (ui = "/io/github/Datalink/window.ui")]
-    public class Window : Adw.ApplicationWindow {
-        public Window (Gtk.Application app) {
-            Object (application: app);
+    public class Tokenizer : Object {
+        public Tokenizer() {
+            Object();
         }
 
-        construct {
-            FileReader file_reader = new FileReader ("src/file.txt");
-            Tokenizer tokenizer = new Tokenizer ();
-            var file_text = file_reader.read_all_text ();
-            if (file_text == null) return;
-            var tokens = tokenizer.tokenize (file_text);
-            foreach (var item in tokens) {
-                print ("%s\n", item);
+        public Gee.ArrayList<string> tokenize(string data) {
+            Gee.ArrayList<string> result = new Gee.ArrayList<string> ();
+            StringBuilder token = new StringBuilder();
+
+            for (var i = 0; i < data.length; i++) {
+                if ("{}[],".contains(data.get(i).to_string())) {
+                    if (token.len > 0) {
+                        result.add(token.str);
+                        token = new StringBuilder();
+                    }
+                    result.add(data.get(i).to_string());
+                } else if (data.get(i) != ' ') {
+                    token.append(data.get(i).to_string());
+                }
             }
+
+            return result;
         }
     }
 }
