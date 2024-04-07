@@ -6,6 +6,7 @@ datalink_sources = [
   'tokenizer.vala',
   'serializer.vala',
   'user.vala',
+  'option.vala',
 ]
 
 datalink_deps = [

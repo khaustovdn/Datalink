@@ -1,4 +1,4 @@
-/* user.vala
+/* option.vala
  *
  * Copyright 2024 khaustov
  *
@@ -19,13 +19,13 @@
  */
 
 namespace Datalink {
-    public class User : Object {
-        public string login { get; set; }
-        public string password { get; set; }
-        public Option option { get; set; }
+    public class Option : Object {
+        public string name { get; set; }
+        public Option parent { get; set; }
+        public Gee.ArrayList<Option> sub_options { get; set; }
 
-        public User (string login, string password) {
-            Object (login: login, password: password, option: new Option("Option"));
+        public Option (string name) {
+            Object (name: name, parent: null, sub_options: new Gee.ArrayList<Option> ());
         }
     }
 }
