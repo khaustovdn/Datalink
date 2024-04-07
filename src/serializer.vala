@@ -36,7 +36,7 @@ namespace Datalink {
                 switch (tokens.get(index)) {
                 case "{" :
                     return deserialize_object(object_type, tokens, ref index);
-                case "[":
+                case "[" :
                     return deserialize_array(object_type, tokens, ref index);
                 default:
                     if (tokens.get(index) == "}")return result;
@@ -87,15 +87,14 @@ namespace Datalink {
                         result.set_property(property.get_name(), property_value);
                         break;
                     } else if (new Regex(regex_pattern_short).match(field_name, 0, out match_info)) {
-                        Serializer serializer = new Serializer();
                         index++;
-                        Object property_value;
-                        if (property.value_type == typeof (Gee.ArrayList)) {
-                            property_value = (Gee.ArrayList) serializer.deserialize_field(property.owner_type, tokens,
-                                                                                    ref index);
-                        } else {
-                            property_value = serializer.deserialize_field(property.value_type, tokens, ref index);
-                        }
+                        Serializer serializer = new Serializer();
+                        var property_value = serializer.deserialize_field(
+                            (property.value_type == typeof (Gee.ArrayList))
+                                ? property.owner_type
+                                : property.value_type,
+                            tokens,
+                            ref index);
                         result.set_property(property.get_name(), property_value);
                         break;
                     }

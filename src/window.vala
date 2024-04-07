@@ -30,7 +30,7 @@ namespace Datalink {
             Tokenizer tokenizer = new Tokenizer ();
             Serializer serializer = new Serializer ();
             var file_text = file_reader.read_all_text ();
-            if (file_text == null)return;
+            if (file_text == null) return;
             var tokens = tokenizer.tokenize (file_text);
             var serials = (Gee.ArrayList<User>) serializer.deserialize (typeof (User), tokens);
             foreach (var item in serials) {
