@@ -46,8 +46,24 @@ namespace Datalink {
                 var users = (Gee.ArrayList<User>) serializer.deserialize (typeof (User), tokens);
                 authentication_button.clicked.connect(() => {
                     var authenticator = new Authenticator(users);
+                    authenticator.apply.connect((user) => {
+                        this.user = user;
+                        Menu options_menu_model = new Menu();
+                        authenticate_user(user.option, options_menu_model);
+                        options_menu.menu_model = options_menu_model;
+                    });
                     authenticator.present(this);
                 });
+            }
+        }
+
+        public void authenticate_user(Option option, Menu options_menu_model) {
+            if (option.options != null && option.options.size > 0) {
+                foreach (var sub_option in option.options) {
+                    Menu sub_menu = new Menu();
+                    authenticate_user(sub_option, sub_menu);
+                    options_menu_model.append_submenu(sub_option.name, sub_menu);
+                }
             }
         }
     }
