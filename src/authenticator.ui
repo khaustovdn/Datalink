@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<interface>
+  <requires lib="gtk" version="4.0" />
+  <requires lib="Adw" version="1.0" />
+  <template class="DatalinkAuthenticator" parent="AdwDialog">
+    <property name="content-width">360</property>
+    <property name="content-height">294</property>
+    <property name="can-close">false</property>
+    <child>
+      <object class="AdwToolbarView">
+        <child type="top">
+          <object class="AdwHeaderBar">
+            <property name="show-end-title-buttons">false</property>
+            <child type="start">
+              <object class="GtkButton" id="cancel_button">
+                <property name="label">Cancel</property>
+              </object>
+            </child>
+            <property name="title-widget">
+              <object class="AdwWindowTitle">
+                <property name="title" translatable="yes">Authentication</property>
+              </object>
+            </property>
+            <child type="end">
+              <object class="GtkButton" id="apply_button">
+                <property name="label">Apply</property>
+                <style>
+                  <class name="suggested-action" />
+                </style>
+              </object>
+            </child>
+          </object>
+        </child>
+        <property name="content">
+          <object class="AdwClamp">
+            <property name="valign">center</property>
+            <property name="margin-start">12</property>
+            <property name="margin-end">12</property>
+            <property name="maximum-size">360</property>
+            <child>
+              <object class="GtkListBox">
+                <style>
+                  <class name="boxed-list" />
+                </style>
+                <child>
+                  <object class="AdwEntryRow" id="login_entry_row">
+                    <property name="title">Login</property>
+                  </object>
+                </child>
+                <child>
+                  <object class="AdwPasswordEntryRow" id="password_entry_row">
+                    <property name="title">Password</property>
+                  </object>
+                </child>
+              </object>
+            </child>
+          </object>
+        </property>
+      </object>
+    </child>
+  </template>
+</interface>

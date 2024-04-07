@@ -7,6 +7,7 @@ datalink_sources = [
   'serializer.vala',
   'user.vala',
   'option.vala',
+  'authenticator.vala',
 ]
 
 datalink_deps = [

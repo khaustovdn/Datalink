@@ -21,6 +21,17 @@
 namespace Datalink {
     [GtkTemplate (ui = "/io/github/Datalink/window.ui")]
     public class Window : Adw.ApplicationWindow {
+        private User user { get; set; }
+
+        [GtkChild]
+        public unowned Adw.HeaderBar header_bar;
+        [GtkChild]
+        public unowned Gtk.Button authentication_button;
+        [GtkChild]
+        public unowned Gtk.MenuButton options_menu;
+
+        public unowned Menu options_menu_model;
+
         public Window (Gtk.Application app) {
             Object (application: app);
         }
@@ -30,11 +41,13 @@ namespace Datalink {
             Tokenizer tokenizer = new Tokenizer ();
             Serializer serializer = new Serializer ();
             var file_text = file_reader.read_all_text ();
-            if (file_text == null) return;
-            var tokens = tokenizer.tokenize (file_text);
-            var serials = (Gee.ArrayList<User>) serializer.deserialize (typeof (User), tokens);
-            foreach (var item in serials) {
-                print ("login: %s, password: %s, options: %s\n", item.login, item.password, item.option.name);
+            if (file_text != null) {
+                var tokens = tokenizer.tokenize (file_text);
+                var users = (Gee.ArrayList<User>) serializer.deserialize (typeof (User), tokens);
+                authentication_button.clicked.connect(() => {
+                    var authenticator = new Authenticator(users);
+                    authenticator.present(this);
+                });
             }
         }
     }
