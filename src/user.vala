@@ -25,7 +25,7 @@ namespace Datalink {
         public Option option { get; set; }
 
         public User (string login, string password) {
-            Object (login: login, password: password, option: new Option("Option"));
+            Object (login: login, password: password);
         }
     }
 }

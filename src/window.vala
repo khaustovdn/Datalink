@@ -32,13 +32,9 @@ namespace Datalink {
             var file_text = file_reader.read_all_text ();
             if (file_text == null)return;
             var tokens = tokenizer.tokenize (file_text);
-            // foreach (var item in tokens) {
-            // print ("%s\n", item);
-            // }
-            int index = 0;
-            var serials = (Gee.ArrayList<User>) serializer.deserialize (typeof (User), tokens, ref index);
+            var serials = (Gee.ArrayList<User>) serializer.deserialize (typeof (User), tokens);
             foreach (var item in serials) {
-                print ("login: %s, password: %s\n", item.login, item.password);
+                print ("login: %s, password: %s, options: %s\n", item.login, item.password, item.option.name);
             }
         }
     }

@@ -21,11 +21,10 @@
 namespace Datalink {
     public class Option : Object {
         public string name { get; set; }
-        public Option parent { get; set; }
-        public Gee.ArrayList<Option> sub_options { get; set; }
+        public Gee.ArrayList<Option> options { get; set; }
 
         public Option (string name) {
-            Object (name: name, parent: null, sub_options: new Gee.ArrayList<Option> ());
+            Object (name: name);
         }
     }
 }

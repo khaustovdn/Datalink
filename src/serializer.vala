@@ -24,7 +24,12 @@ namespace Datalink {
             Object();
         }
 
-        public Object ? deserialize(Type object_type, Gee.ArrayList<string> tokens, ref int index) {
+        public Object ? deserialize(Type object_type, Gee.ArrayList<string> tokens) {
+            int index = 0;
+            return deserialize_field(object_type, tokens, ref index);
+        }
+
+        public Object ? deserialize_field(Type object_type, Gee.ArrayList<string> tokens, ref int index) {
             var result = Object.new(object_type);
 
             while (index < tokens.size) {
@@ -47,7 +52,7 @@ namespace Datalink {
         private Object deserialize_object(Type object_type, Gee.ArrayList<string> tokens, ref int index) {
             index++;
             Serializer serializer = new Serializer();
-            return serializer.deserialize(object_type, tokens, ref index);
+            return serializer.deserialize_field(object_type, tokens, ref index);
         }
 
         private Gee.ArrayList<Object> deserialize_array(Type object_type, Gee.ArrayList<string> tokens, ref int index) {
@@ -55,7 +60,7 @@ namespace Datalink {
             var serializer = new Serializer();
             var result = new Gee.ArrayList<Object> ();
             do {
-                var object = serializer.deserialize(object_type, tokens, ref index);
+                var object = serializer.deserialize_field(object_type, tokens, ref index);
                 result.add(object);
                 if (tokens.get(index + 1) == ",") {
                     index++;
@@ -86,10 +91,10 @@ namespace Datalink {
                         index++;
                         Object property_value;
                         if (property.value_type == typeof (Gee.ArrayList)) {
-                            property_value = (Gee.ArrayList) serializer.deserialize(property.owner_type, tokens,
+                            property_value = (Gee.ArrayList) serializer.deserialize_field(property.owner_type, tokens,
                                                                                     ref index);
                         } else {
-                            property_value = serializer.deserialize(property.value_type, tokens, ref index);
+                            property_value = serializer.deserialize_field(property.value_type, tokens, ref index);
                         }
                         result.set_property(property.get_name(), property_value);
                         break;
