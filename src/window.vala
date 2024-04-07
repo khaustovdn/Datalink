@@ -36,9 +36,10 @@ namespace Datalink {
             // print ("%s\n", item);
             // }
             int index = 0;
-            var serials = (User) serializer.deserialize (typeof (User), tokens, ref index);
-            if (serials.tester != null)
-                print ("%s", serials.tester.last ().login);
+            var serials = (Gee.ArrayList<User>) serializer.deserialize (typeof (User), tokens, ref index);
+            foreach (var item in serials) {
+                print ("login: %s, password: %s\n", item.login, item.password);
+            }
         }
     }
 }

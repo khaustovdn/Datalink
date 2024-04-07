@@ -20,73 +20,84 @@
 
 namespace Datalink {
     public class Serializer : Object {
-        public Serializer () {
-            Object ();
+        public Serializer() {
+            Object();
         }
 
-        public Object ? deserialize (Type object_type, Gee.ArrayList<string> tokens, ref int index) {
-            var result = Object.new (object_type);
+        public Object ? deserialize(Type object_type, Gee.ArrayList<string> tokens, ref int index) {
+            var result = Object.new(object_type);
 
             while (index < tokens.size) {
-                switch (tokens.get (index)) {
+                switch (tokens.get(index)) {
                 case "{" :
-                    result = Object.new (object_type);
-                    Serializer serializer = new Serializer ();
-                    index++;
-                    result = serializer.deserialize (object_type, tokens, ref index);
-                    return result;
+                    return deserialize_object(object_type, tokens, ref index);
                 case "[":
-                    var result_array = new Gee.ArrayList<Object> ();
-                    Serializer serializer = new Serializer ();
-                    do {
-                        index++;
-                        var object = serializer.deserialize (object_type, tokens, ref index);
-                        result_array.add (object);
-                        if (tokens.get (index + 1) == ",") {
-                            index++;
-                            continue;
-                        } else break;
-                    } while (tokens.get (index) != "]");
-                    return result_array;
+                    return deserialize_array(object_type, tokens, ref index);
                 default:
-                    string field_name = tokens[index];
-                    if (field_name == "}")return result;
-
-                    var class_ref = (ObjectClass) object_type.class_ref ();
-                    ParamSpec[] properties = class_ref.list_properties ();
-
-                    foreach (var property in properties) {
-                        string regex_pattern = "(?<=\"" + property.get_name () + "\")(\\s*:\\s*\")(.*)(?=\")";
-                        string regex_pattern_short = "(?<=\"" + property.get_name ().replace ("-", "_") + "\")(\\s*:\\s*)";
-                        try {
-                            MatchInfo? match_info;
-
-                            if (new Regex (regex_pattern).match (field_name, 0, out match_info)) {
-                                string property_value = match_info.fetch (2);
-                                result.set_property (property.get_name (), property_value);
-                                break;
-                            } else if (new Regex (regex_pattern_short).match (field_name, 0, out match_info)) {
-                                Serializer serializer = new Serializer ();
-                                index++;
-                                Object property_value;
-                                if (property.value_type == typeof (Gee.ArrayList)) {
-                                    property_value = (Gee.ArrayList) serializer.deserialize (property.owner_type, tokens, ref index);
-                                } else {
-                                    property_value = serializer.deserialize (property.value_type, tokens, ref index);
-                                }
-                                result.set_property (property.get_name (), property_value);
-                                break;
-                            }
-                        } catch (RegexError e) {
-                            stderr.printf ("Regex error: %s\n", e.message);
-                        }
-                    }
+                    if (tokens.get(index) == "}")return result;
+                    deserialize_property(object_type, tokens, ref index, ref result);
                     break;
                 }
                 index++;
             }
 
             return null;
+        }
+
+        private Object deserialize_object(Type object_type, Gee.ArrayList<string> tokens, ref int index) {
+            index++;
+            Serializer serializer = new Serializer();
+            return serializer.deserialize(object_type, tokens, ref index);
+        }
+
+        private Gee.ArrayList<Object> deserialize_array(Type object_type, Gee.ArrayList<string> tokens, ref int index) {
+            index++;
+            var serializer = new Serializer();
+            var result = new Gee.ArrayList<Object> ();
+            do {
+                var object = serializer.deserialize(object_type, tokens, ref index);
+                result.add(object);
+                if (tokens.get(index + 1) == ",") {
+                    index++;
+                    continue;
+                }
+            } while (tokens.get(index + 1) != "]");
+            return result;
+        }
+
+        private void deserialize_property(Type object_type, Gee.ArrayList<string> tokens, ref int index, ref Object result) {
+            string field_name = tokens.get(index);
+
+            var class_ref = (ObjectClass) object_type.class_ref();
+            ParamSpec[] properties = class_ref.list_properties();
+
+            foreach (var property in properties) {
+                string regex_pattern = "(?<=\"" + property.get_name() + "\")(\\s*:\\s*\")(.*)(?=\")";
+                string regex_pattern_short = "(?<=\"" + property.get_name().replace("-", "_") + "\")(\\s*:\\s*)";
+                try {
+                    MatchInfo? match_info = null;
+
+                    if (new Regex(regex_pattern).match(field_name, 0, out match_info)) {
+                        string property_value = match_info.fetch(2);
+                        result.set_property(property.get_name(), property_value);
+                        break;
+                    } else if (new Regex(regex_pattern_short).match(field_name, 0, out match_info)) {
+                        Serializer serializer = new Serializer();
+                        index++;
+                        Object property_value;
+                        if (property.value_type == typeof (Gee.ArrayList)) {
+                            property_value = (Gee.ArrayList) serializer.deserialize(property.owner_type, tokens,
+                                                                                    ref index);
+                        } else {
+                            property_value = serializer.deserialize(property.value_type, tokens, ref index);
+                        }
+                        result.set_property(property.get_name(), property_value);
+                        break;
+                    }
+                } catch (RegexError e) {
+                    stderr.printf("Regex error: %s\n", e.message);
+                }
+            }
         }
     }
 }
