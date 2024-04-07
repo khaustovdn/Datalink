@@ -19,11 +19,6 @@
  */
 
 namespace Datalink {
-    public enum Format {
-        OBJECT,
-        ARRAY
-    }
-
     public class Serializer : Object {
         public Serializer () {
             Object ();
@@ -31,58 +26,60 @@ namespace Datalink {
 
         public Object ? deserialize (Type object_type, Gee.ArrayList<string> tokens, ref int index) {
             var result = Object.new (object_type);
-            int type = ((result as Gee.ArrayList<Object>) != null) ? Format.ARRAY : Format.OBJECT;
 
             while (index < tokens.size) {
                 switch (tokens.get (index)) {
                 case "{" :
+                    result = Object.new (object_type);
                     Serializer serializer = new Serializer ();
                     index++;
-                    var object = serializer.deserialize (object_type, tokens, ref index);
-                    return object;
+                    result = serializer.deserialize (object_type, tokens, ref index);
+                    return result;
                 case "[":
+                    var result_array = new Gee.ArrayList<Object> ();
                     Serializer serializer = new Serializer ();
-                    index++;
-                    var object = serializer.deserialize (object_type, tokens, ref index);
-                    return object;
+                    do {
+                        index++;
+                        var object = serializer.deserialize (object_type, tokens, ref index);
+                        result_array.add (object);
+                        if (tokens.get (index + 1) == ",") {
+                            index++;
+                            continue;
+                        } else break;
+                    } while (tokens.get (index) != "]");
+                    return result_array;
                 default:
-                    switch (type) {
-                    case Format.OBJECT:
-                        string field_name = tokens[index];
-                        if (field_name == "}")return result;
+                    string field_name = tokens[index];
+                    if (field_name == "}")return result;
 
-                        var class_ref = (ObjectClass) object_type.class_ref ();
-                        ParamSpec[] properties = class_ref.list_properties ();
+                    var class_ref = (ObjectClass) object_type.class_ref ();
+                    ParamSpec[] properties = class_ref.list_properties ();
 
-                        foreach (var property in properties) {
-                            string regex_pattern = "(?<=\"" + property.get_name () + "\")(\\s*:\\s*\")(.*)(?=\")";
-                            string regex_pattern_short = "(?<=\"" + property.get_name ().replace ("-", "_") + "\")(\\s*:\\s*)";
-                            try {
-                                MatchInfo? match_info;
+                    foreach (var property in properties) {
+                        string regex_pattern = "(?<=\"" + property.get_name () + "\")(\\s*:\\s*\")(.*)(?=\")";
+                        string regex_pattern_short = "(?<=\"" + property.get_name ().replace ("-", "_") + "\")(\\s*:\\s*)";
+                        try {
+                            MatchInfo? match_info;
 
-                                if (new Regex (regex_pattern).match (field_name, 0, out match_info)) {
-                                    string property_value = match_info.fetch (2);
-                                    result.set_property (property.get_name (), property_value);
-                                    break;
-                                } else if (new Regex (regex_pattern_short).match (field_name, 0, out match_info)) {
-                                    Serializer serializer = new Serializer ();
-                                    index++;
-                                    var property_value = serializer.deserialize (property.value_type, tokens, ref index);
-                                    result.set_property (property.get_name (), property_value);
-                                    break;
+                            if (new Regex (regex_pattern).match (field_name, 0, out match_info)) {
+                                string property_value = match_info.fetch (2);
+                                result.set_property (property.get_name (), property_value);
+                                break;
+                            } else if (new Regex (regex_pattern_short).match (field_name, 0, out match_info)) {
+                                Serializer serializer = new Serializer ();
+                                index++;
+                                Object property_value;
+                                if (property.value_type == typeof (Gee.ArrayList)) {
+                                    property_value = (Gee.ArrayList) serializer.deserialize (property.owner_type, tokens, ref index);
+                                } else {
+                                    property_value = serializer.deserialize (property.value_type, tokens, ref index);
                                 }
-                            } catch (RegexError e) {
-                                stderr.printf ("Regex error: %s\n", e.message);
+                                result.set_property (property.get_name (), property_value);
+                                break;
                             }
+                        } catch (RegexError e) {
+                            stderr.printf ("Regex error: %s\n", e.message);
                         }
-
-                        break;
-                    case Format.ARRAY :
-                        string field_name = tokens[index];
-                        if (field_name == "]")return result;
-
-
-                        break;
                     }
                     break;
                 }
