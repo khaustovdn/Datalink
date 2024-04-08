@@ -38,12 +38,10 @@ namespace Datalink {
 
         construct {
             FileReader file_reader = new FileReader ("src/file.txt");
-            Tokenizer tokenizer = new Tokenizer ();
             Serializer serializer = new Serializer ();
             var file_text = file_reader.read_all_text ();
-            if (file_text != null) {
-                var tokens = tokenizer.tokenize (file_text);
-                var users = (Gee.ArrayList<User>) serializer.deserialize (typeof (User), tokens);
+            var users = (Gee.ArrayList<User>) serializer.deserialize (typeof (User), file_text);
+            if (users != null) {
                 authentication_button.clicked.connect(() => {
                     var authenticator = new Authenticator(users);
                     authenticator.apply.connect((user) => {

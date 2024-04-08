@@ -24,8 +24,11 @@ namespace Datalink {
             Object();
         }
 
-        public Object ? deserialize(Type object_type, Gee.ArrayList<string> tokens) {
+        public Object ? deserialize(Type object_type, string? text) {
+            if (text == null) return null;
+            Tokenizer tokenizer = new Tokenizer();
             int index = 0;
+            var tokens = tokenizer.tokenize(text);
             return deserialize_field(object_type, tokens, ref index);
         }
 
@@ -90,11 +93,11 @@ namespace Datalink {
                         index++;
                         Serializer serializer = new Serializer();
                         var property_value = serializer.deserialize_field(
-                            (property.value_type == typeof (Gee.ArrayList))
+                                                                          (property.value_type == typeof (Gee.ArrayList))
                                 ? property.owner_type
                                 : property.value_type,
-                            tokens,
-                            ref index);
+                                                                          tokens,
+                                                                          ref index);
                         result.set_property(property.get_name(), property_value);
                         break;
                     }
